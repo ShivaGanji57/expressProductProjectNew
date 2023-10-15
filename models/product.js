@@ -6,7 +6,7 @@
 //   'data',
 //   'products.json'
 // );
-const db=require('../util/database')
+// const db=require('../util/database')
 
 // const getProductsFromFile = cb => {
 //   fs.readFile(p, (err, fileContent) => {
@@ -18,14 +18,14 @@ const db=require('../util/database')
 //   });
 // };
 
-module.exports = class Product {
-  constructor(id,title, imageUrl, description, price) {
-    this.id=id
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
-  }
+// module.exports = class Product {
+//   constructor(id,title, imageUrl, description, price) {
+//     this.id=id
+//     this.title = title;
+//     this.imageUrl = imageUrl;
+//     this.description = description;
+//     this.price = price;
+//   }
 
   // save method to store in file
   // save() {
@@ -69,22 +69,49 @@ module.exports = class Product {
   //   })
   // }
 
-  save(){
-    return db.execute('insert into products(title,price,description,imageUrl) values(?,?,?,?)',
-    [this.title,this.price,this.description,this.imageUrl]);
-  }
-  static fetchAll(){
-    return db.execute('select * from products')
-  }
+//   save(){
+//     return db.execute('insert into products(title,price,description,imageUrl) values(?,?,?,?)',
+//     [this.title,this.price,this.description,this.imageUrl]);
+//   }
+//   static fetchAll(){
+//     return db.execute('select * from products')
+//   }
 
-  static findById(id){
-      return db.execute('select * from products where id=?',[id]);
-  }
+//   static findById(id){
+//       return db.execute('select * from products where id=?',[id]);
+//   }
 
-  static deleteById(id){
-    return db.execute('delete from products where id=?',[id])
+//   static deleteById(id){
+//     return db.execute('delete from products where id=?',[id])
+//   }
+//   updateById(id){
+//     return db.execute('update products set title=?,price=?,description=?,imageUrl=? where id=?',[this.title,this.price,this.description,this.imageUrl,this.id])
+//   }
+// };
+
+const Sequelize=require('sequelize')
+const sequelize=require('../util/database')
+
+const Product=sequelize.define('product',{
+  id:{
+    type:Sequelize.INTEGER,
+    allowNull:false,
+    autoIncrement:true,
+    primaryKey:true
+  },
+  title:Sequelize.STRING,
+  price:{
+    type:Sequelize.DOUBLE,
+    allowNull:false
+  },
+  description:{
+    type:Sequelize.STRING,
+    allowNull:false
+  },
+  imageUrl:{
+    type:Sequelize.STRING,
+    allowNull:false
   }
-  updateById(id){
-    return db.execute('update products set title=?,price=?,description=?,imageUrl=? where id=?',[this.title,this.price,this.description,this.imageUrl,this.id])
-  }
-};
+})
+
+module.exports=Product
