@@ -15,6 +15,8 @@ const shopRoutes = require('./routes/shop');
 // const expenseRoutes=require('./routes/expense');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -35,6 +37,10 @@ app.use(errorController.get404);
 
 Product.belongsTo(User,{constraints:true,onDelete:'CASCADE'})
 User.hasMany(Product)
+User.hasOne(Cart)
+Cart.belongsTo(User)
+Cart.belongsToMany(Product,{through:CartItem})
+Product.belongsToMany(Cart,{through:CartItem})
 sequelize.sync().then(result=>{
     return User.findByPk(1)
 }).then(user=>{
@@ -47,8 +53,12 @@ sequelize.sync().then(result=>{
     }
     return user 
 }).then(user=>{
-    app.listen(3000)
+    return user.createCart()
+    
 }).
-catch(err=>{
+then(user=>{
+    app.listen(3000)
+})
+.catch(err=>{
     console.log(err)
 })
